@@ -24,17 +24,15 @@ export default {
     let xStart, yStart, xEnd, yEnd
     xStart = yStart = 15
     xEnd = yEnd = 435
-
+    let chessBox = []
     let me = true
     // 用于存放棋盘中落子的情况, 初始值为 0
-    let chessBox = []
     for (let i = 0; i < 15; i++) {
       chessBox[i] = []
       for (let j = 0; j < 15; j++) {
         chessBox[i][j] = 0
       }
     }
-
     // 绘制棋盘
     function drawChessBoard () {
       context.strokeStyle = '#D6D1D1'
@@ -71,11 +69,11 @@ export default {
     }
 
     chess.onclick = function (e) {
-      console.log(123123, chessBox)
       let x = e.offsetX // 相对于棋盘左上角的x坐标
       let y = e.offsetY // 相对于棋盘左上角的y坐标
       let i = Math.floor(x / 30)
       let j = Math.floor(y / 30)
+      console.log(123123, chessBox)
       if (chessBox[i][j] === 0) {
         oneStep(i, j, me)
         if (me) {
@@ -85,6 +83,95 @@ export default {
         }
         me = !me // 下一步白棋
       }
+    }
+  },
+  methods: {
+    chessClick () {
+
+    },
+    // 0 游戏未结束 1 黑子赢 2 白子赢
+    isGameOver () {
+      let count = 0
+      for (let i = 0; i < 15; i++) {
+        for (let j = 0; j < 11; j++) {
+          count = 0
+          for (let k = 0; k < 5; k++) {
+            if (chessBox[i][j + k] === 0) {
+              count = 0
+              break
+            } else {
+              count += chessBox[i][j + k]
+            }
+          }
+          if (count === 5) {
+            return 1
+          } else if (count === 10) {
+            return 2
+          }
+        }
+      }
+
+      // 横向0°的五子判断
+      for (let i = 0; i < 15; i++) {
+        for (let j = 0; j < 11; j++) {
+          count = 0
+          for (let k = 0; k < 5; k++) {
+            if (chessBox[j + k][i] === 0) {
+              count = 0
+              break
+            } else {
+              count += chessBox[j + k][i]
+            }
+          }
+          if (count === 5) {
+            return 1
+          } else if (count === 10) {
+            return 2
+          }
+        }
+      }
+
+      // 斜向135°的五子判断'\'方向
+      for (let i = 0; i < 11; i++) {
+        for (let j = 0; j < 11; j++) {
+          count = 0
+          for (let k = 0; k < 5; k++) {
+            if (chessBox[i + k][j + k] === 0) {
+              count = 0
+              break
+            } else {
+              count += chessBox[i + k][j + k]
+            }
+          }
+          if (count === 5) {
+            return 1
+          } else if (count === 10) {
+            return 2
+          }
+        }
+      }
+
+      // 斜向45°的五子判断'/'方向
+      for (let i = 0; i < 11; i++) {
+        for (let j = 14; j > 3; j--) {
+          count = 0
+          for (let k = 0; k < 5; k++) {
+            if (chessBox[i + k][j - k] === 0) {
+              count = 0
+              break
+            } else {
+              count += chessBox[i + k][j - k]
+            }
+          }
+          if (count === 5) {
+            return 1
+          } else if (count === 10) {
+            return 2
+          }
+        }
+      }
+
+      return 0
     }
   }
 }
